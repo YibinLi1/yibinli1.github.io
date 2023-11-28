@@ -157,8 +157,6 @@
             }
         }
 
-        button.onclick = function() { deleteStore(i); };
-
         function deleteStore(storeId) {
            
             receivedStoreList.splice(storeId, 1);
@@ -219,6 +217,13 @@
                 cell.appendChild(priceDiv);
                 cell.appendChild(ratingDiv);
                 cell.appendChild(dealDiv);
+
+            var checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.className = "store-checkbox";
+            checkbox.setAttribute("data-store-id", i);
+            checkbox.addEventListener('change', handleCheckboxChange);
+            buttonContainer.appendChild(checkbox);
             }
         }
 
@@ -277,63 +282,7 @@
                             comparisonResultsDiv.innerHTML = '<p>Please select exactly two stores to compare.</p>';
                     }
             }
-
-        var tableBody = document.getElementById("storeTableBody");
-        for (var i = 0; i < receivedStoreList.length; i++) {
-            if (i % 3 === 0) {
-                var row = tableBody.insertRow();
-            }
-            var store = receivedStoreList[i];
-            var cell = row.insertCell();
-            cell.classList.add("smallpad");
-
-            var buttonContainer = document.createElement("div");
-            buttonContainer.classList.add("button_div");
-            var button = document.createElement("button");
-            button.textContent = "Remove";
-            buttonContainer.appendChild(button);
-
-            // Create a div for each attribute
-            var nameDiv = document.createElement("div");
-            nameDiv.textContent = "Name: " + store.name;
-            nameDiv.classList.add("store-info");
-
-            var typeDiv = document.createElement("div");
-            typeDiv.textContent = "Type: " + store.type;
-            typeDiv.classList.add("store-info");
-
-            var distanceDiv = document.createElement("div");
-            distanceDiv.textContent = "Distance: " + store.distance + "mi.";
-            distanceDiv.classList.add("store-info");
-
-            var priceDiv = document.createElement("div");
-            priceDiv.textContent = "Price: " + store.price;
-            priceDiv.classList.add("store-info");
-
-            var ratingDiv = document.createElement("div");
-            ratingDiv.textContent = "Rating: " + store.rating;
-            ratingDiv.classList.add("store-info");
-
-            var DealDiv = document.createElement("div");
-            DealDiv.textContent = "Deal: " + store.deal;
-            DealDiv.classList.add("store-info");
-
-            // Append the divs to the cell
-            cell.appendChild(buttonContainer);
-            cell.appendChild(nameDiv);
-            cell.appendChild(typeDiv);
-            cell.appendChild(distanceDiv);
-            cell.appendChild(priceDiv);
-            cell.appendChild(ratingDiv);
-            cell.appendChild(DealDiv);
-
-            var checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.className = "store-checkbox";
-            checkbox.setAttribute("data-store-id", i);
-            checkbox.addEventListener('change', handleCheckboxChange);
-            buttonContainer.appendChild(checkbox);
-        }
+        
 
         function redirectHomePage() { // go to index.html
             window.location.href = "index.html";
@@ -348,6 +297,7 @@
                 $(".highlight-number").css("visibility", "visible");
                 $(".highlight-number").text(added_items.length);
             }
+            populateStoreTable();
         });
     </script>
 </body>
