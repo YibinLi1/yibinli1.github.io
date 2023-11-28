@@ -54,18 +54,34 @@
 
     <script>
         // Retrieve the storeList from the query parameter
-        var store1 = new Store(1,"Store1", "Franchise", 5, "$$", 4.1, "bread");
-        var store2 = new Store(2,"Store2", "Franchise", 2, "$", 4.0, "egg");
-        var store3 = new Store(3,"Store3", "Franchise", 4, "$$", 3.2, "noodles");
-        var store4 = new Store(4,"Store4", "Local", 5, "$$$", 4.4, "milk");
-        var store5 = new Store(5,"Store5", "Franchise", 6, "$", 4.8, "cookies");
-        var store6 = new Store(6,"Store6", "Franchise", 7, "$$", 2.0, "chips");
-        var store7 = new Store(7,"Store7", "Local", 10, "$$", 3.3, "candy");
-        var store8 = new Store(8,"Store8", "Franchise", 8, "$$$", 2.1, "cheese");
-        var store9 = new Store(9,"Store9", "Local", 3, "$", 3.9, "tomato");
+        var store1 = new Store("Store1", "Franchise", 5, "$$", 4.1, "bread");
+        var store2 = new Store("Store2", "Franchise", 2, "$", 4.0, "egg");
+        var store3 = new Store("Store3", "Franchise", 4, "$$", 3.2, "noodles");
+        var store4 = new Store("Store4", "Local", 5, "$$$", 4.4, "milk");
+        var store5 = new Store("Store5", "Franchise", 6, "$", 4.8, "cookies");
+        var store6 = new Store("Store6", "Franchise", 7, "$$", 2.0, "chips");
+        var store7 = new Store("Store7", "Local", 10, "$$", 3.3, "candy");
+        var store8 = new Store("Store8", "Franchise", 8, "$$$", 2.1, "cheese");
+        var store9 = new Store("Store9", "Local", 3, "$", 3.9, "tomato");
         var storeList = [store1, store2, store3, store4, store5, store6, store7, store8, store9]; // Create a list of stores using an array
         var added_items = [];
+        function addCookies(id) {
+            id = id.toString();
+            console.log("trying to add cookies", id);
 
+            var prev_cookie = $.cookie("id");
+            if (prev_cookie === undefined) {
+                prev_cookie = "";
+            }
+            if ($.cookie("id") !== undefined) {
+                var new_cookie = prev_cookie + ";" + id;
+            }
+            else {
+                var new_cookie = id;
+            }
+            $.cookie("id", new_cookie);
+            update_cookies();
+        }
         function getCookies() {
             var decodedCookie = decodeURIComponent($.cookie("id"));
             var cookies = decodedCookie.split(';');
@@ -82,19 +98,27 @@
         }
 
         function deleteCookie(id) {
-            var cookies = getCookies();
-            var index = cookies.indexOf(id);
+        id = id.toString();
+        var prev_cookie = $.cookie("id");
 
-            if (index !== -1) {
-                cookies.splice(index, 1);
-                if(cookies.length === 0){
-                    $.removeCookie("id");
-                }
-                else {
-                    $.cookie("id", cookies.join(';'));
-                }
+        if (prev_cookie === undefined) {
+            return;
+        }
+
+        var cookies = getCookies();
+        var index = cookies.indexOf(id);
+
+        if (index !== -1) {
+            cookies.splice(index, 1);
+            if(cookies.length === 0){
+                $.removeCookie("id");
             }
-    	}
+            else {
+                $.cookie("id", cookies.join(';'));
+            }
+            update_cookies(); // Call your update_cookies function if needed
+        }
+    }
 
     function update_cookies(){
       console.log("cookies are being changed");
@@ -116,8 +140,7 @@
             }
             return store_list;
         }
-        function Store(id,name, type, distance, price, rating, deal) { // Constructor function for a store
-            this.id=id;
+        function Store(name, type, distance, price, rating, deal) { // Constructor function for a store
             this.name = name;
             this.type = type;
             this.distance = distance;
@@ -161,15 +184,14 @@
         }
 
         function deleteStore(storeId) {
-            storeId = parseInt(storeId); // Ensure storeId is an integer
+           
+            receivedStoreList.splice(storeId, 1);
 
-            var storeIndex = receivedStoreList.findIndex(store => store.id === storeId);
-            if (storeIndex !== -1) {
-                receivedStoreList.splice(storeIndex, 1); // Remove the store
-                deleteCookie(storeId.toString()); // Update the cookie
-                populateStoreTable(); // Refresh the table
-            }
-}
+            deleteCookie(storeId.toString());
+
+            populateStoreTable();
+        }
+
         function populateStoreTable() {
             var tableBody = document.getElementById("storeTableBody");
             tableBody.innerHTML = ""; // Clear the existing table contents
@@ -187,9 +209,9 @@
 
                 var button = document.createElement("button");
                 button.textContent = "Remove";
-                (function(currentStoreId) {
-                    button.onclick = function() { deleteStore(currentStoreId); };
-                })(store.id); 
+                (function(currentIndex) {
+                    button.onclick = function() { deleteStore(currentIndex); };
+                })(i);
                 buttonContainer.appendChild(button);
 
                 var nameDiv = document.createElement("div");
