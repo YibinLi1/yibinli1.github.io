@@ -97,15 +97,20 @@
             return cookies;
         }
 
-function deleteCookie(storeIdentifier) {
-    var cookies = getCookies(); // Now returns a list of store identifiers
-    var index = cookies.indexOf(storeIdentifier);
-
-    if (index !== -1) {
-        cookies.splice(index, 1);
-        $.cookie("id", cookies.join(';'));
-    }
-}
+	function deleteCookie(id) {
+	    var cookies = getCookies();
+	    var index = cookies.indexOf(id);
+	
+	    if (index !== -1) {
+	        cookies.splice(index, 1);
+	        if(cookies.length === 0){
+	            $.removeCookie("id");
+	        }
+	        else {
+	            $.cookie("id", cookies.join(';'));
+	        }
+	    }
+	}
 
         var cookies = getCookies();
         var index = cookies.indexOf(id);
@@ -185,19 +190,17 @@ function deleteCookie(storeIdentifier) {
             }
         }
 
-function deleteStore(storeId) {
-    var storeToDelete = receivedStoreList[storeId];
-    var storeIdentifier = storeToDelete.name; // Assuming name is unique
-
-    // Delete from cookie
-    deleteCookie(storeIdentifier);
-
-    // Remove from receivedStoreList
-    receivedStoreList.splice(storeId, 1);
-
-    // Repopulate the table
-    populateStoreTable();
-}
+	function deleteStore(storeId) {
+	    var storeToDelete = receivedStoreList[storeId];
+	    var actualIndex = storeList.findIndex(store => store.name === storeToDelete.name);
+	
+	    if (actualIndex !== -1) {
+	        deleteCookie(actualIndex.toString()); // Update cookie
+	    }
+	
+	    receivedStoreList.splice(storeId, 1); // Remove from the received list
+	    populateStoreTable();
+	}
 
         function populateStoreTable() {
             var tableBody = document.getElementById("storeTableBody");
