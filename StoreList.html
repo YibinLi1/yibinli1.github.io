@@ -184,13 +184,19 @@
         }
 
         function deleteStore(storeId) {
-           
-            receivedStoreList.splice(storeId, 1);
+            // Find the actual store in the original storeList
+            var actualStore = receivedStoreList[storeId];
+            var actualIndex = storeList.findIndex(store => store.name === actualStore.name);
 
-            deleteCookie(storeId.toString());
+            // Update both receivedStoreList and cookies
+            if (actualIndex !== -1) {
+                storeList.splice(actualIndex, 1); // Remove from the original list if needed
+                deleteCookie(actualIndex.toString()); // Update cookie
+            }
 
+            receivedStoreList.splice(storeId, 1); 
             populateStoreTable();
-        }
+}
 
         function populateStoreTable() {
             var tableBody = document.getElementById("storeTableBody");
