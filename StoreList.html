@@ -184,13 +184,19 @@
         }
 
         function deleteStore(storeId) {
-           
-            receivedStoreList.splice(storeId, 1);
-
-            deleteCookie(storeId.toString());
-
-            populateStoreTable();
-        }
+	    // Find the store in the array using its ID
+	    const storeIndex = receivedStoreList.findIndex(store => store.id === storeId);
+	    if (storeIndex !== -1) {
+	        // Remove the store from the array
+	        receivedStoreList.splice(storeIndex, 1);
+	
+	        // Update the cookie
+	        deleteCookie(storeId.toString());
+	
+	        // Repopulate the store table
+	        populateStoreTable();
+	    }
+	}
 
         function populateStoreTable() {
             var tableBody = document.getElementById("storeTableBody");
