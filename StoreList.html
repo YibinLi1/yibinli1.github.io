@@ -183,7 +183,9 @@
 
                 var button = document.createElement("button");
                 button.textContent = "Remove";
-                button.onclick = function() { deleteStore(i); };
+                (function(currentIndex) {
+                    button.onclick = function() { deleteStore(currentIndex); };
+                })(i);
                 buttonContainer.appendChild(button);
 
                 var nameDiv = document.createElement("div");
