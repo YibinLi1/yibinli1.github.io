@@ -97,13 +97,15 @@
             return cookies;
         }
 
-        function deleteCookie(id) {
-        id = id.toString();
-        var prev_cookie = $.cookie("id");
+function deleteCookie(storeIdentifier) {
+    var cookies = getCookies(); // Now returns a list of store identifiers
+    var index = cookies.indexOf(storeIdentifier);
 
-        if (prev_cookie === undefined) {
-            return;
-        }
+    if (index !== -1) {
+        cookies.splice(index, 1);
+        $.cookie("id", cookies.join(';'));
+    }
+}
 
         var cookies = getCookies();
         var index = cookies.indexOf(id);
@@ -183,19 +185,18 @@
             }
         }
 
-        function deleteStore(storeId) {
-            // Find the actual store in the original storeList
-            var actualStore = receivedStoreList[storeId];
-            var actualIndex = storeList.findIndex(store => store.name === actualStore.name);
+function deleteStore(storeId) {
+    var storeToDelete = receivedStoreList[storeId];
+    var storeIdentifier = storeToDelete.name; // Assuming name is unique
 
-            // Update both receivedStoreList and cookies
-            if (actualIndex !== -1) {
-                storeList.splice(actualIndex, 1); // Remove from the original list if needed
-                deleteCookie(actualIndex.toString()); // Update cookie
-            }
+    // Delete from cookie
+    deleteCookie(storeIdentifier);
 
-            receivedStoreList.splice(storeId, 1); 
-            populateStoreTable();
+    // Remove from receivedStoreList
+    receivedStoreList.splice(storeId, 1);
+
+    // Repopulate the table
+    populateStoreTable();
 }
 
         function populateStoreTable() {
